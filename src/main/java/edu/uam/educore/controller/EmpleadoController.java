@@ -45,4 +45,42 @@ public Empleado buscarPorId(int id) throws Exception {
 
     return null;
 }
+public Empleado actualizar(
+        int id,
+        String nombre,
+        String apellidos,
+        String email,
+        double salario,
+        java.time.LocalDate fechaIngreso,
+        edu.uam.educore.enums.TipoEmpleado tipo
+) throws Exception {
+
+    Empleado e = buscarPorId(id);
+
+    if (e == null) {
+        throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
+    }
+
+    e.setNombre(nombre);
+    e.setApellidos(apellidos);
+    e.setEmail(email);
+    e.setSalario(salario);
+    e.setFechaIngreso(fechaIngreso);
+    e.setTipoEmpleado(tipo);
+
+    repo.actualizar(e);
+
+    return e;
+}
+
+public void eliminar(int id) throws Exception {
+    Empleado e = buscarPorId(id);
+
+    if (e == null) {
+        throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
+    }
+
+    repo.eliminar(id);
+}
+
 }
