@@ -57,4 +57,16 @@ public class Empleado extends Persona {
                 fechaIngreso
         );
     }
+    
+    public void setSalario(double salario) {
+    this.salario = salario;
+}
+
+public void setFechaIngreso(java.time.LocalDate fechaIngreso) {
+    this.fechaIngreso = fechaIngreso;
+}
+
+public void setTipoEmpleado(edu.uam.educore.enums.TipoEmpleado tipo) {
+    this.tipo = tipo;
+}
 }
