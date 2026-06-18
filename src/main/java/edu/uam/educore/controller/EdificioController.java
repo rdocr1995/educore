@@ -2,59 +2,57 @@ package edu.uam.educore.controller;
 
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.model.infraestructura.Edificio;
-
 import java.util.List;
 import java.util.Optional;
 
 public class EdificioController {
 
-    private final Repositorio<Edificio> repo;
-    private int proximoId = 1;
+  private final Repositorio<Edificio> repo;
+  private int proximoId = 1;
 
-    public EdificioController(Repositorio<Edificio> repo) {
-        this.repo = repo;
+  public EdificioController(Repositorio<Edificio> repo) {
+    this.repo = repo;
+  }
+
+  // REGISTRAR
+  public Edificio registrar(String codigo, String nombre) throws Exception {
+
+    if (codigo.isEmpty() || nombre.isEmpty()) {
+      throw new IllegalArgumentException("Código y nombre son obligatorios");
     }
 
-    // REGISTRAR
-    public Edificio registrar(String codigo, String nombre) throws Exception {
+    Edificio e = new Edificio(proximoId++, codigo, nombre);
 
-        if (codigo.isEmpty() || nombre.isEmpty()) {
-            throw new IllegalArgumentException("Código y nombre son obligatorios");
-        }
+    repo.guardar(e);
 
-        Edificio e = new Edificio(proximoId++, codigo, nombre);
+    return e;
+  }
 
-        repo.guardar(e);
+  // LISTAR
+  public List<Edificio> listar() throws Exception {
+    return repo.buscarTodos();
+  }
 
-        return e;
+  // BUSCAR
+  public Edificio buscarPorId(int id) throws Exception {
+    Optional<Edificio> op = repo.buscarPorId(id);
+    return op.orElse(null);
+  }
+
+  // ELIMINAR
+  public void eliminar(int id) throws Exception {
+
+    Edificio e = buscarPorId(id);
+
+    if (e == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + id);
     }
 
-    // LISTAR
-    public List<Edificio> listar() throws Exception {
-        return repo.buscarTodos();
+    if (!e.getAulas().isEmpty()) {
+      throw new IllegalArgumentException(
+          "No se puede eliminar el edificio porque tiene aulas registradas");
     }
 
-    // BUSCAR
-    public Edificio buscarPorId(int id) throws Exception {
-        Optional<Edificio> op = repo.buscarPorId(id);
-        return op.orElse(null);
-    }
-
-    // ELIMINAR 
-    public void eliminar(int id) throws Exception {
-
-        Edificio e = buscarPorId(id);
-
-        if (e == null) {
-            throw new IllegalArgumentException("No existe edificio con ID " + id);
-        }
-        
-        
-        if (!e.getAulas().isEmpty()) {
-            throw new IllegalArgumentException("No se puede eliminar el edificio porque tiene aulas registradas");
-        }
-
-
-        repo.eliminar(id);
-    }
+    repo.eliminar(id);
+  }
 }
