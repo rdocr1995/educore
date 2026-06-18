@@ -63,7 +63,26 @@ public class EmpleadoView extends VistaBase {
     String nombre = leerTexto("Nombre");
     String apellidos = leerTexto("Apellidos");
     String email = leerTexto("Email");
+
+    // campos vacíos
+    if (nombre.isEmpty() || apellidos.isEmpty() || email.isEmpty()) {
+      mostrarError("No se permiten campos vacíos");
+      return;
+    }
+
+    // email básico
+    if (!email.contains("@")) {
+      mostrarError("Email inválido");
+      return;
+    }
+
     double salario = leerDecimal("Salario");
+
+    // salario validacion
+    if (salario < 0) {
+      mostrarError("El salario no puede ser negativo");
+      return;
+    }
 
     java.time.LocalDate fechaIngreso = leerFecha("Fecha ingreso (AAAA-MM-DD)");
 
@@ -169,7 +188,25 @@ public class EmpleadoView extends VistaBase {
       String nombre = leerTexto("Nombre");
       String apellidos = leerTexto("Apellidos");
       String email = leerTexto("Email");
+      // campos vacíos
+      if (nombre.isEmpty() || apellidos.isEmpty() || email.isEmpty()) {
+        mostrarError("No se permiten campos vacíos");
+        return;
+      }
+
+      // email básico
+      if (!email.contains("@")) {
+        mostrarError("Email inválido");
+        return;
+      }
+
       double salario = leerDecimal("Salario");
+
+      // salario validacion
+      if (salario < 0) {
+        mostrarError("El salario no puede ser negativo");
+        return;
+      }
       java.time.LocalDate fechaIngreso = leerFecha("Fecha ingreso (AAAA-MM-DD)");
 
       System.out.println("Tipo de empleado:");
