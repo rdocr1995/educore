@@ -256,15 +256,15 @@ public class EmpleadoView extends VistaBase {
     int id = leerEntero("ID del empleado a eliminar");
 
     try {
-      Empleado existente = controller.buscarPorId(id);
+      Empleado e = controller.buscarPorId(id);
 
-      if (existente == null) {
+      if (e == null) {
         mostrarError("No existe empleado con ID " + id + ".");
         return;
       }
 
       System.out.println("\nEmpleado encontrado:");
-      System.out.println(existente.getId() + " | " + existente.getInfo());
+      System.out.println(e.getId() + " | " + e.getInfo());
 
       String confirmacion = leerTexto("¿Seguro que desea eliminarlo? (S/N)");
 
@@ -277,8 +277,8 @@ public class EmpleadoView extends VistaBase {
 
       mostrarMensaje("Empleado eliminado correctamente");
 
-    } catch (Exception e) {
-      mostrarError(e.getMessage());
+    } catch (Exception ex) {
+      mostrarError(ex.getMessage());
     }
   }
 }
