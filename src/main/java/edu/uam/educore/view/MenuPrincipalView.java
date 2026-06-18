@@ -1,13 +1,14 @@
 package edu.uam.educore.view;
 
-import edu.uam.educore.dao.ListaEstudianteRepo;
+//
 import edu.uam.educore.dao.ListaEmpleadoRepo;
+import edu.uam.educore.dao.ListaEstudianteRepo;
 import java.util.Scanner;
 
 public class MenuPrincipalView extends VistaBase {
 
   private final EstudianteView estudianteView;
-private final EmpleadoView empleadoView;
+  private final EmpleadoView empleadoView;
 
   public MenuPrincipalView(Scanner scanner) {
     super(scanner);
@@ -25,7 +26,8 @@ private final EmpleadoView empleadoView;
     // this.seccionView  = new SeccionView(scanner, seccionRepo, empleadoRepo, estudianteRepo,
     // edificioRepo);
   }
-//
+
+  //
   public void iniciar() {
     mostrarBienvenida();
     boolean corriendo = true;

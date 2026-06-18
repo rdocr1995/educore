@@ -6,59 +6,59 @@ import java.util.Optional;
 
 public class EmpleadoController {
 
-    private final Repositorio<Empleado> repo;
-    private int proximoId = 1;
+  private final Repositorio<Empleado> repo;
+  private int proximoId = 1;
 
-    public EmpleadoController(Repositorio<Empleado> repo) {
-        this.repo = repo;
-    }
+  public EmpleadoController(Repositorio<Empleado> repo) {
+    this.repo = repo;
+  }
 
-    public Empleado registrar(String nombre,String apellidos,String email,double salario,java.time.LocalDate fechaIngreso,edu.uam.educore.enums.TipoEmpleado tipo
-    ) throws Exception {
+  public Empleado registrar(
+      String nombre,
+      String apellidos,
+      String email,
+      double salario,
+      java.time.LocalDate fechaIngreso,
+      edu.uam.educore.enums.TipoEmpleado tipo)
+      throws Exception {
 
-        Empleado e = new Empleado(
-                proximoId,
-                nombre,
-                apellidos,
-                email,
-                salario,
-                fechaIngreso,
-                tipo
-        );
+    Empleado e = new Empleado(proximoId, nombre, apellidos, email, salario, fechaIngreso, tipo);
 
-        repo.guardar(e);
+    repo.guardar(e);
 
-        proximoId++;
+    proximoId++;
 
-        return e;
-    }
-    
-    public java.util.List<Empleado> listar() throws Exception {
+    return e;
+  }
+
+  public java.util.List<Empleado> listar() throws Exception {
     return repo.buscarTodos();
-}
-public Empleado buscarPorId(int id) throws Exception {
+  }
+
+  public Empleado buscarPorId(int id) throws Exception {
     Optional<Empleado> resultado = repo.buscarPorId(id);
 
     if (resultado.isPresent()) {
-        return resultado.get();
+      return resultado.get();
     }
 
     return null;
-}
-public Empleado actualizar(
-        int id,
-        String nombre,
-        String apellidos,
-        String email,
-        double salario,
-        java.time.LocalDate fechaIngreso,
-        edu.uam.educore.enums.TipoEmpleado tipo
-) throws Exception {
+  }
+
+  public Empleado actualizar(
+      int id,
+      String nombre,
+      String apellidos,
+      String email,
+      double salario,
+      java.time.LocalDate fechaIngreso,
+      edu.uam.educore.enums.TipoEmpleado tipo)
+      throws Exception {
 
     Empleado e = buscarPorId(id);
 
     if (e == null) {
-        throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
+      throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
     }
 
     e.setNombre(nombre);
@@ -71,16 +71,15 @@ public Empleado actualizar(
     repo.actualizar(e);
 
     return e;
-}
+  }
 
-public void eliminar(int id) throws Exception {
+  public void eliminar(int id) throws Exception {
     Empleado e = buscarPorId(id);
 
     if (e == null) {
-        throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
+      throw new IllegalArgumentException("No existe empleado con ID " + id + ".");
     }
 
     repo.eliminar(id);
-}
-
+  }
 }
