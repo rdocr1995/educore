@@ -14,7 +14,7 @@ public class EdificioController {
     this.repo = repo;
   }
 
-  // REGISTRAR
+  // REGISTRAR EDIFICIO
   public Edificio registrar(String codigo, String nombre) throws Exception {
 
     if (codigo.isEmpty() || nombre.isEmpty()) {
@@ -28,7 +28,7 @@ public class EdificioController {
     return e;
   }
 
-  // LISTAR
+  // LISTAR EDIFICIO
   public List<Edificio> listar() throws Exception {
     return repo.buscarTodos();
   }
