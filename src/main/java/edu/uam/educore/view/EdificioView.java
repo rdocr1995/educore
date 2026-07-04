@@ -22,9 +22,10 @@ public class EdificioView extends VistaBase {
       System.out.println("\n--- MENÚ EDIFICIOS ---");
       System.out.println("1. Registrar edificio");
       System.out.println("2. Listar edificios");
-      System.out.println("3. Buscar edificio por ID (y listar aulas)");
+      System.out.println("3. Buscar edificio (y listar aulas)");
       System.out.println("4. Eliminar edificio");
-      System.out.println("5. Agregar aula a edificio");
+      System.out.println("5. Agregar aula");
+      System.out.println("6. Eliminar aula");
       System.out.println("0. Salir");
 
       opcion = leerEntero("Seleccione una opción: ");
@@ -44,6 +45,9 @@ public class EdificioView extends VistaBase {
           break;
         case 5:
           agregarAulaAEdificio();
+          break;
+        case 6:
+          eliminarAulaDeEdificio();
           break;
         case 0:
           System.out.println("Saliendo...");
@@ -101,7 +105,14 @@ public class EdificioView extends VistaBase {
           System.out.println("Aulas registradas:");
           for (Aula a : aulas) {
             System.out.println(
-                " - " + a.getNumero() + " | " + a.getCapacidad() + " pax | Tipo: " + a.getTipo());
+                " - ID: "
+                    + a.getId()
+                    + " | "
+                    + a.getNumero()
+                    + " | "
+                    + a.getCapacidad()
+                    + " pax | Tipo: "
+                    + a.getTipo());
           }
         }
       }
@@ -135,19 +146,32 @@ public class EdificioView extends VistaBase {
     int idEdificio = leerEntero("ID del edificio al que desea agregar el aula: ");
     String numero = leerTexto("Número del aula: ");
     int capacidad = leerEntero("Capacidad del aula: ");
-
     System.out.println("Seleccione el tipo de aula:");
     for (int i = 0; i < TipoAula.values().length; i++) {
       System.out.println(i + ". " + TipoAula.values()[i]);
     }
     int tipoIdx = leerEntero("Opción: ");
-
     try {
       TipoAula tipo = TipoAula.values()[tipoIdx];
       controller.agregarAula(idEdificio, numero, capacidad, tipo);
-      mostrarMensaje("Aula " + numero + " agregada exitosamente al edificio.");
+      mostrarMensaje("Aula " + numero + " agregada exitosamente.");
     } catch (Exception ex) {
       mostrarError("Error: " + ex.getMessage());
+    }
+  }
+
+  private void eliminarAulaDeEdificio() {
+    int idAula = leerEntero("ID del aula a eliminar: ");
+    String confirmacion = leerTexto("¿Está seguro de eliminar el aula? (S/N): ");
+    if (confirmacion.equalsIgnoreCase("S")) {
+      try {
+        controller.eliminarAula(idAula);
+        mostrarMensaje("Aula eliminada exitosamente.");
+      } catch (Exception ex) {
+        mostrarError(ex.getMessage());
+      }
+    } else {
+      mostrarMensaje("Operación cancelada.");
     }
   }
 }
