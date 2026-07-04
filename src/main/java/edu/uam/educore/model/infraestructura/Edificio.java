@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Edificio {
-
   private int id;
   private String codigo;
   private String nombre;
-
-  // ver las aulas que contiene
-  private List<Object> aulas = new ArrayList<>();
+  // Asegúrate de que la lista sea de tipo Aula
+  private List<Aula> aulas = new ArrayList<>();
 
   public Edificio(int id, String codigo, String nombre) {
     this.id = id;
@@ -30,11 +28,16 @@ public class Edificio {
     return nombre;
   }
 
-  public String getInfo() {
-    return codigo + " | " + nombre;
+  public List<Aula> getAulas() {
+    return aulas;
   }
 
-  public List<Object> getAulas() {
-    return aulas;
+  // Este es el método que tu controlador está buscando y no encuentra
+  public void agregarAula(Aula aula) {
+    this.aulas.add(aula);
+  }
+
+  public String getInfo() {
+    return codigo + " | " + nombre;
   }
 }
