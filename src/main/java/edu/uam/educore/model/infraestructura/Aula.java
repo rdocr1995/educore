@@ -8,6 +8,7 @@ public class Aula {
   private String numero;
   private int capacidad;
   private TipoAula tipo;
+  // Esta es la relación de composición que asegura que el aula conozca su edificio
   private Edificio edificio;
   private List<Seccion> secciones = new ArrayList<>();
 
@@ -35,11 +36,11 @@ public class Aula {
     return tipo;
   }
 
+  // El aula conoce su edificio
   public Edificio getEdificio() {
     return edificio;
   }
 
-  // Métodos para gestionar Secciones
   public void agregarSeccion(Seccion seccion) {
     this.secciones.add(seccion);
   }

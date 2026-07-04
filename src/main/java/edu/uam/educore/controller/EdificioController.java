@@ -40,7 +40,9 @@ public class EdificioController {
       throws Exception {
     Edificio edificio = buscarPorId(edificioId);
     if (edificio == null) throw new IllegalArgumentException("Edificio no existe");
+
     Aula nuevaAula = new Aula(proximoIdAula++, numero, capacidad, tipo, edificio);
+
     edificio.agregarAula(nuevaAula);
     repo.actualizar(edificio);
     return nuevaAula;
