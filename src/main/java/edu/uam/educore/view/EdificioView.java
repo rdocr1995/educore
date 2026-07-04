@@ -2,8 +2,10 @@ package edu.uam.educore.view;
 
 import edu.uam.educore.controller.EdificioController;
 import edu.uam.educore.dao.Repositorio;
+import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
 import edu.uam.educore.model.infraestructura.TipoAula;
+import java.util.List;
 import java.util.Scanner;
 
 public class EdificioView extends VistaBase {
@@ -16,12 +18,11 @@ public class EdificioView extends VistaBase {
 
   public void iniciar() {
     int opcion;
-
     do {
       System.out.println("\n--- MENÚ EDIFICIOS ---");
       System.out.println("1. Registrar edificio");
       System.out.println("2. Listar edificios");
-      System.out.println("3. Buscar edificio por ID");
+      System.out.println("3. Buscar edificio por ID (y listar aulas)");
       System.out.println("4. Eliminar edificio");
       System.out.println("5. Agregar aula a edificio");
       System.out.println("0. Salir");
@@ -50,19 +51,16 @@ public class EdificioView extends VistaBase {
         default:
           System.out.println("Opción inválida");
       }
-
     } while (opcion != 0);
   }
 
   private void registrarEdificio() {
     String codigo = leerTexto("Código del edificio");
     String nombre = leerTexto("Nombre del edificio");
-
     if (codigo.isEmpty() || nombre.isEmpty()) {
       mostrarError("Código y nombre son obligatorios");
       return;
     }
-
     try {
       Edificio e = controller.registrar(codigo, nombre);
       mostrarMensaje("Edificio registrado:\n" + e.getId() + " | " + e.getInfo());
@@ -73,7 +71,7 @@ public class EdificioView extends VistaBase {
 
   private void listarEdificios() {
     try {
-      java.util.List<Edificio> lista = controller.listar();
+      List<Edificio> lista = controller.listar();
       if (lista.isEmpty()) {
         mostrarMensaje("No hay edificios registrados");
         return;
@@ -96,7 +94,16 @@ public class EdificioView extends VistaBase {
       } else {
         System.out.println("\n--- EDIFICIO ENCONTRADO ---");
         System.out.println(e.getId() + " | " + e.getInfo());
-        System.out.println("Aulas registradas: " + e.getAulas().size());
+        List<Aula> aulas = e.getAulas();
+        if (aulas.isEmpty()) {
+          System.out.println("Aulas: (ninguna registrada)");
+        } else {
+          System.out.println("Aulas registradas:");
+          for (Aula a : aulas) {
+            System.out.println(
+                " - " + a.getNumero() + " | " + a.getCapacidad() + " pax | Tipo: " + a.getTipo());
+          }
+        }
       }
     } catch (Exception ex) {
       mostrarError(ex.getMessage());

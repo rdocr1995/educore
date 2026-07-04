@@ -1,13 +1,16 @@
 package edu.uam.educore.model.infraestructura;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Aula {
   private int id;
   private String numero;
   private int capacidad;
   private TipoAula tipo;
   private Edificio edificio;
+  private List<Seccion> secciones = new ArrayList<>();
 
-  // Este es el constructor que EdificioController está buscando
   public Aula(int id, String numero, int capacidad, TipoAula tipo, Edificio edificio) {
     this.id = id;
     this.numero = numero;
@@ -16,7 +19,6 @@ public class Aula {
     this.edificio = edificio;
   }
 
-  // Getters
   public int getId() {
     return id;
   }
@@ -35,5 +37,14 @@ public class Aula {
 
   public Edificio getEdificio() {
     return edificio;
+  }
+
+  // Métodos para gestionar Secciones
+  public void agregarSeccion(Seccion seccion) {
+    this.secciones.add(seccion);
+  }
+
+  public List<Seccion> getSecciones() {
+    return secciones;
   }
 }
