@@ -36,16 +36,22 @@ public class EdificioController {
     repo.eliminar(id);
   }
 
-  public Aula agregarAula(int edificioId, String numero, int capacidad, TipoAula tipo)
+  public Aula agregarAula(int edificioId, String numero, int capacidad, String tipo)
       throws Exception {
+
     Edificio edificio = buscarPorId(edificioId);
-    if (edificio == null) throw new IllegalArgumentException("Edificio no existe");
 
-    Aula nuevaAula = new Aula(proximoIdAula++, numero, capacidad, tipo, edificio);
+    if (edificio == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + edificioId);
+    }
+    // AGREGAR
+    TipoAula tipoAula = TipoAula.valueOf(tipo);
 
-    edificio.agregarAula(nuevaAula);
-    repo.actualizar(edificio);
-    return nuevaAula;
+    Aula aula = new Aula(0, numero, capacidad, tipoAula, edificio);
+
+    edificio.agregarAula(aula);
+
+    return aula;
   }
 
   public void eliminarAula(int idAula) throws Exception {

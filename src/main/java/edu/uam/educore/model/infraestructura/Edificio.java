@@ -7,8 +7,17 @@ public class Edificio {
   private int id;
   private String codigo;
   private String nombre;
-  // Asegúrate de que la lista sea de tipo Aula
+
   private List<Aula> aulas = new ArrayList<>();
+
+  // Agrega el aula
+  public void agregarAula(Aula aula) {
+    aulas.add(aula);
+  }
+
+  public List<Aula> getAulas() {
+    return aulas;
+  }
 
   public Edificio(int id, String codigo, String nombre) {
     this.id = id;
@@ -26,15 +35,6 @@ public class Edificio {
 
   public String getNombre() {
     return nombre;
-  }
-
-  public List<Aula> getAulas() {
-    return aulas;
-  }
-
-  // Este es el método que tu controlador está buscando y no encuentra
-  public void agregarAula(Aula aula) {
-    this.aulas.add(aula);
   }
 
   public String getInfo() {

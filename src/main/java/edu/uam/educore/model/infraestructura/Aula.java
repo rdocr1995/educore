@@ -48,4 +48,8 @@ public class Aula {
   public List<Seccion> getSecciones() {
     return secciones;
   }
+
+  public String getInfo() {
+    return numero + " | Capacidad: " + capacidad + " | Tipo: " + tipo;
+  }
 }

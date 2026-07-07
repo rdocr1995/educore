@@ -4,7 +4,6 @@ import edu.uam.educore.controller.EdificioController;
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
-import edu.uam.educore.model.infraestructura.TipoAula;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,7 +24,7 @@ public class EdificioView extends VistaBase {
       System.out.println("3. Buscar edificio (y listar aulas)");
       System.out.println("4. Eliminar edificio");
       System.out.println("5. Agregar aula");
-      System.out.println("6. Eliminar aula");
+      System.out.println("6. Listar aula");
       System.out.println("0. Salir");
 
       opcion = leerEntero("Seleccione una opción: ");
@@ -44,11 +43,15 @@ public class EdificioView extends VistaBase {
           eliminarEdificio();
           break;
         case 5:
-          agregarAulaAEdificio();
+          agregarAula();
           break;
         case 6:
-          eliminarAulaDeEdificio();
+          listarAulas();
           break;
+        case 7:
+          eliminarAula();
+          break;
+
         case 0:
           System.out.println("Saliendo...");
           break;
@@ -142,36 +145,101 @@ public class EdificioView extends VistaBase {
     }
   }
 
-  private void agregarAulaAEdificio() {
-    int idEdificio = leerEntero("ID del edificio al que desea agregar el aula: ");
+  private void agregarAula() {
+
+    int edificioId = leerEntero("ID del edificio: ");
     String numero = leerTexto("Número del aula: ");
-    int capacidad = leerEntero("Capacidad del aula: ");
-    System.out.println("Seleccione el tipo de aula:");
-    for (int i = 0; i < TipoAula.values().length; i++) {
-      System.out.println(i + ". " + TipoAula.values()[i]);
-    }
-    int tipoIdx = leerEntero("Opción: ");
+    int capacidad = leerEntero("Capacidad: ");
+    String tipo = leerTexto("Tipo (REGULAR, LABORATORIO, AUDITORIO): ");
+
     try {
-      TipoAula tipo = TipoAula.values()[tipoIdx];
-      controller.agregarAula(idEdificio, numero, capacidad, tipo);
-      mostrarMensaje("Aula " + numero + " agregada exitosamente.");
-    } catch (Exception ex) {
-      mostrarError("Error: " + ex.getMessage());
+      controller.agregarAula(edificioId, numero, capacidad, tipo);
+      mostrarMensaje("Aula agregada correctamente");
+    } catch (Exception e) {
+      mostrarError(e.getMessage());
     }
   }
 
-  private void eliminarAulaDeEdificio() {
-    int idAula = leerEntero("ID del aula a eliminar: ");
-    String confirmacion = leerTexto("¿Está seguro de eliminar el aula? (S/N): ");
-    if (confirmacion.equalsIgnoreCase("S")) {
-      try {
-        controller.eliminarAula(idAula);
-        mostrarMensaje("Aula eliminada exitosamente.");
-      } catch (Exception ex) {
-        mostrarError(ex.getMessage());
+  private void listarAulas() {
+    int edificioId = leerEntero("ID del edificio: ");
+
+    try {
+      Edificio edificio = controller.buscarPorId(edificioId);
+
+      if (edificio == null) {
+        mostrarError("No existe edificio con ID " + edificioId);
+        return;
       }
-    } else {
-      mostrarMensaje("Operación cancelada.");
+
+      System.out.println("\n--- AULAS DEL EDIFICIO ---");
+      System.out.println(edificio.getId() + " | " + edificio.getInfo());
+
+      if (edificio.getAulas().isEmpty()) {
+        mostrarMensaje("No hay aulas registradas en este edificio");
+        return;
+      }
+
+      for (Aula aula : edificio.getAulas()) {
+        System.out.println(aula.getInfo());
+      }
+
+    } catch (Exception e) {
+      mostrarError(e.getMessage());
+    }
+  }
+
+  private void eliminarAula() {
+
+    int edificioId = leerEntero("ID del edificio: ");
+
+    try {
+      Edificio edificio = controller.buscarPorId(edificioId);
+
+      if (edificio == null) {
+        mostrarError("No existe edificio con ID " + edificioId);
+        return;
+      }
+
+      if (edificio.getAulas().isEmpty()) {
+        mostrarMensaje("No hay aulas para eliminar");
+        return;
+      }
+
+      System.out.println("\n--- AULAS DEL EDIFICIO ---");
+
+      for (Aula aula : edificio.getAulas()) {
+        System.out.println(aula.getInfo());
+      }
+
+      String numero = leerTexto("Número del aula a eliminar: ");
+
+      Aula encontrada = null;
+
+      for (Aula aula : edificio.getAulas()) {
+        if (aula.getNumero().equals(numero)) {
+          encontrada = aula;
+          break;
+        }
+      }
+
+      if (encontrada == null) {
+        mostrarError("No se encontró el aula");
+        return;
+      }
+
+      String confirmacion = leerTexto("¿Desea eliminarla? (S/N): ");
+
+      if (!confirmacion.equalsIgnoreCase("S")) {
+        mostrarMensaje("Operación cancelada");
+        return;
+      }
+
+      edificio.getAulas().remove(encontrada);
+
+      mostrarMensaje("Aula eliminada correctamente");
+
+    } catch (Exception e) {
+      mostrarError(e.getMessage());
     }
   }
 }
