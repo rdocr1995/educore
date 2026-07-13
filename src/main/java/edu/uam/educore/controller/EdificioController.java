@@ -67,6 +67,4 @@ public class EdificioController {
     }
     if (!eliminada) throw new Exception("No se encontró un aula con ID " + idAula);
   }
-
- 
 }

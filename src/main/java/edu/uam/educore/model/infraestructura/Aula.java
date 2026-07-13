@@ -1,8 +1,5 @@
 package edu.uam.educore.model.infraestructura;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Aula {
   private int id;
   private String numero;
@@ -10,7 +7,6 @@ public class Aula {
   private TipoAula tipo;
   // Esta es la relación de composición que asegura que el aula conozca su edificio
   private Edificio edificio;
-
 
   public Aula(int id, String numero, int capacidad, TipoAula tipo, Edificio edificio) {
     this.id = id;
@@ -40,8 +36,6 @@ public class Aula {
   public Edificio getEdificio() {
     return edificio;
   }
-
-
 
   public String getInfo() {
     return numero + " | Capacidad: " + capacidad + " | Tipo: " + tipo;

@@ -12,7 +12,7 @@ public abstract class VistaBase {
     this.scanner = scanner;
   }
 
-  //SALIDA INFO
+  // SALIDA INFO
 
   protected void mostrarMensaje(String msg) {
     System.out.println("[INFO] " + msg);
@@ -22,7 +22,7 @@ public abstract class VistaBase {
     System.out.println("[ERROR] " + err);
   }
 
-//ENTRADA
+  // ENTRADA
 
   protected String leerTexto(String etiqueta) {
     System.out.print(etiqueta + ": ");
