@@ -82,8 +82,8 @@ public class ServidorMatricula {
    * </ol>
    *
    * <p>Cómo distinguir los cuatro casos de error (carnet inexistente, sección inexistente, cupo
-   * lleno, matrícula duplicada) queda a su criterio de diseño — no hay una jerarquía de
-   * excepciones provista. Ver "Puntos extra" en el enunciado si quieren diseñar la suya.
+   * lleno, matrícula duplicada) queda a su criterio de diseño — no hay una jerarquía de excepciones
+   * provista. Ver "Puntos extra" en el enunciado si quieren diseñar la suya.
    *
    * <p>Referencia del patrón JDBC: EstudianteRepoSql.
    */

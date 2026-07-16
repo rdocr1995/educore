@@ -11,6 +11,7 @@ public class EdificioController {
   private final Repositorio<Edificio> repo;
   private int proximoId = 1;
   private int proximoIdAula = 1;
+  private int proximoAulaId = 1;
   private int proximoIdSeccion = 1;
 
   public EdificioController(Repositorio<Edificio> repo) {
@@ -32,6 +33,18 @@ public class EdificioController {
   }
 
   public void eliminar(int id) throws Exception {
+
+    Edificio e = buscarPorId(id);
+
+    if (e == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + id);
+    }
+
+    if (!e.getAulas().isEmpty()) {
+      throw new IllegalArgumentException(
+          "No se puede eliminar el edificio porque tiene aulas registradas");
+    }
+
     repo.eliminar(id);
   }
 
@@ -46,7 +59,7 @@ public class EdificioController {
     // AGREGAR
     TipoAula tipoAula = TipoAula.valueOf(tipo);
 
-    Aula aula = new Aula(0, numero, capacidad, tipoAula, edificio);
+    Aula aula = new Aula(proximoAulaId++, numero, capacidad, tipoAula, edificio);
 
     edificio.agregarAula(aula);
 
