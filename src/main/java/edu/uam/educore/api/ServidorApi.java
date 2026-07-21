@@ -1,21 +1,20 @@
 package edu.uam.educore.api;
 
+import edu.uam.educore.api.Dtos.EmpleadoDto;
+import edu.uam.educore.api.Dtos.EmpleadoRequest;
 import edu.uam.educore.api.Dtos.EstudianteDto;
 import edu.uam.educore.api.Dtos.EstudianteRequest;
 import edu.uam.educore.api.Dtos.MatriculaRequest;
+import edu.uam.educore.controller.EmpleadoController;
 import edu.uam.educore.controller.EstudianteController;
+import edu.uam.educore.dao.EmpleadoRepoSql;
 import edu.uam.educore.dao.EstudianteRepoSql;
+import edu.uam.educore.dao.ListaEmpleadoRepo;
 import edu.uam.educore.dao.ListaEstudianteRepo;
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.db.ConfiguracionBD;
-import edu.uam.educore.model.personas.Estudiante;
-import edu.uam.educore.api.Dtos.EmpleadoDto;
-import edu.uam.educore.api.Dtos.EmpleadoRequest;
-import edu.uam.educore.controller.EmpleadoController;
-import edu.uam.educore.dao.EmpleadoRepoSql;
-import edu.uam.educore.dao.ListaEmpleadoRepo;
 import edu.uam.educore.model.personas.Empleado;
-import java.time.LocalDate;
+import edu.uam.educore.model.personas.Estudiante;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import java.io.BufferedReader;
@@ -26,6 +25,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -46,17 +46,16 @@ public class ServidorApi {
     }
 
     EstudianteController estudianteController = new EstudianteController(estudianteRepo);
-    
+
     Repositorio<Empleado> empleadoRepo;
 
-try {
-  empleadoRepo = new EmpleadoRepoSql(ConfiguracionBD.desdeArchivo(".env"));
-} catch (IOException e) {
-  empleadoRepo = new ListaEmpleadoRepo();
-}
+    try {
+      empleadoRepo = new EmpleadoRepoSql(ConfiguracionBD.desdeArchivo(".env"));
+    } catch (IOException e) {
+      empleadoRepo = new ListaEmpleadoRepo();
+    }
 
-EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
-
+    EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
 
     Javalin app =
         Javalin.create(
@@ -135,10 +134,8 @@ EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
     cfg.routes.get(
         "/api/empleados",
         ctx -> {
-          
           List<Empleado> empleados = controller.listar();
           ctx.json(EmpleadoDto.listaDesde(empleados));
-          
         });
 
     cfg.routes.post(
@@ -146,10 +143,15 @@ EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
         ctx -> {
           // TODO(estudiante · P1): parseen el body y llamen a su método de registro. Ej.:
           EmpleadoRequest r = ctx.bodyAsClass(EmpleadoRequest.class);
-          Empleado creado = controller.registrar(r.nombre(), r.apellidos(),
-          r.email(), r.salario(), LocalDate.parse(r.fechaIngreso()), r.tipo());
+          Empleado creado =
+              controller.registrar(
+                  r.nombre(),
+                  r.apellidos(),
+                  r.email(),
+                  r.salario(),
+                  LocalDate.parse(r.fechaIngreso()),
+                  r.tipo());
           ctx.status(201).json(EmpleadoDto.desde(creado));
-          
         });
 
     cfg.routes.put(
@@ -159,19 +161,24 @@ EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
           // actualización. Ej.:
           int id = Integer.parseInt(ctx.pathParam("id"));
           EmpleadoRequest r = ctx.bodyAsClass(EmpleadoRequest.class);
-          Empleado actualizado = controller.actualizar(id, r.nombre(),
-          r.apellidos(), r.email(), r.salario(), LocalDate.parse(r.fechaIngreso()),
-          r.tipo());
-           ctx.json(EmpleadoDto.desde(actualizado));
-          
+          Empleado actualizado =
+              controller.actualizar(
+                  id,
+                  r.nombre(),
+                  r.apellidos(),
+                  r.email(),
+                  r.salario(),
+                  LocalDate.parse(r.fechaIngreso()),
+                  r.tipo());
+          ctx.json(EmpleadoDto.desde(actualizado));
         });
 
     cfg.routes.delete(
         "/api/empleados/{id}",
         ctx -> {
-        int id = Integer.parseInt(ctx.pathParam("id"));  
-        controller.eliminar(id); 
-        ctx.status(204);
+          int id = Integer.parseInt(ctx.pathParam("id"));
+          controller.eliminar(id);
+          ctx.status(204);
         });
   }
 
