@@ -3,8 +3,6 @@ package edu.uam.educore.dao;
 import edu.uam.educore.db.Conexion;
 import edu.uam.educore.db.ConfiguracionBD;
 import edu.uam.educore.model.infraestructura.Aula;
-
-import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.infraestructura.Edificio;
 import edu.uam.educore.model.infraestructura.TipoAula;
 import java.sql.Connection;
@@ -63,31 +61,33 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       while (rs.next()) {
 
         Edificio e = new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
-<<<<<<< HEAD
-String sqlAulas =
-    "SELECT * FROM aula WHERE edificio_id = ?";
+        while (rs.next()) {
 
-PreparedStatement psAula =
-    con.prepareStatement(sqlAulas);
+          String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
 
-psAula.setInt(1, e.getId());
+          try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
 
-ResultSet rsAula =
-    psAula.executeQuery();
+            psAula.setInt(1, e.getId());
 
-while (rsAula.next()) {
+            try (ResultSet rsAula = psAula.executeQuery()) {
 
-    Aula aula =
-        new Aula(
-            rsAula.getInt("id"),
-            rsAula.getString("numero"),
-            rsAula.getInt("capacidad"),
-            TipoAula.valueOf(rsAula.getString("tipo")),
-            e);
+              while (rsAula.next()) {
 
-    e.agregarAula(aula);
-}
-=======
+                Aula aula =
+                    new Aula(
+                        rsAula.getInt("id"),
+                        rsAula.getString("numero"),
+                        rsAula.getInt("capacidad"),
+                        TipoAula.valueOf(rsAula.getString("tipo")),
+                        e);
+
+                e.agregarAula(aula);
+              }
+            }
+          }
+
+          lista.add(e);
+        }
         String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
 
         try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
@@ -110,7 +110,7 @@ while (rsAula.next()) {
             }
           }
         }
->>>>>>> 82fc1bd9ed9d08272123eaf035b117f9d5d5635d
+
         lista.add(e);
       }
     }
@@ -208,18 +208,16 @@ while (rsAula.next()) {
       ps.executeUpdate();
     }
   }
-  
+
   public void eliminarAula(int idAula) throws Exception {
 
     String sql = "DELETE FROM aula WHERE id = ?";
 
-    try (
-        Connection con = abrir();
-        PreparedStatement ps = con.prepareStatement(sql)
-    ) {
+    try (Connection con = abrir();
+        PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, idAula);
-        ps.executeUpdate();
+      ps.setInt(1, idAula);
+      ps.executeUpdate();
     }
-}
+  }
 }
