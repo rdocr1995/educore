@@ -256,6 +256,17 @@ public class ServidorApi {
 
           ctx.status(201).json(AulaDto.desde(aula));
         });
+    
+    cfg.routes.delete(
+    "/api/aulas/{id}",
+    ctx -> {
+        int idAula = Integer.parseInt(ctx.pathParam("id"));
+
+        controller.eliminarAula(idAula);
+
+        ctx.status(204);
+    });
+    
   }
 
   // ── Secciones (P1 de cada grupo — sin controlador de nombre fijo) ──

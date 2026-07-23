@@ -74,10 +74,15 @@ public class EdificioController {
   public void eliminarAula(int idAula) throws Exception {
     boolean eliminada = false;
     for (Edificio e : repo.buscarTodos()) {
+        
       Optional<Aula> aulaOpt = e.getAulas().stream().filter(a -> a.getId() == idAula).findFirst();
 
       if (aulaOpt.isPresent()) {
         e.getAulas().remove(aulaOpt.get());
+        
+        if (repo instanceof EdificioRepoSql repoSql) {
+    repoSql.eliminarAula(idAula);
+}
         repo.actualizar(e);
         eliminada = true;
         break;

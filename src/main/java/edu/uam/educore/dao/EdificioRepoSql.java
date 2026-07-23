@@ -3,6 +3,8 @@ package edu.uam.educore.dao;
 import edu.uam.educore.db.Conexion;
 import edu.uam.educore.db.ConfiguracionBD;
 import edu.uam.educore.model.infraestructura.Aula;
+
+import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.infraestructura.Edificio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,7 +62,29 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       while (rs.next()) {
 
         Edificio e = new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
+String sqlAulas =
+    "SELECT * FROM aula WHERE edificio_id = ?";
 
+PreparedStatement psAula =
+    con.prepareStatement(sqlAulas);
+
+psAula.setInt(1, e.getId());
+
+ResultSet rsAula =
+    psAula.executeQuery();
+
+while (rsAula.next()) {
+
+    Aula aula =
+        new Aula(
+            rsAula.getInt("id"),
+            rsAula.getString("numero"),
+            rsAula.getInt("capacidad"),
+            TipoAula.valueOf(rsAula.getString("tipo")),
+            e);
+
+    e.agregarAula(aula);
+}
         lista.add(e);
       }
     }
@@ -138,4 +162,18 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       ps.executeUpdate();
     }
   }
+  
+  public void eliminarAula(int idAula) throws Exception {
+
+    String sql = "DELETE FROM aula WHERE id = ?";
+
+    try (
+        Connection con = abrir();
+        PreparedStatement ps = con.prepareStatement(sql)
+    ) {
+
+        ps.setInt(1, idAula);
+        ps.executeUpdate();
+    }
+}
 }
