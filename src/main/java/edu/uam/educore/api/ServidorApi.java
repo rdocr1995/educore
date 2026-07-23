@@ -1,18 +1,27 @@
 package edu.uam.educore.api;
 
+import edu.uam.educore.api.Dtos.AulaDto;
+import edu.uam.educore.api.Dtos.AulaRequest;
+import edu.uam.educore.api.Dtos.EdificioDto;
+import edu.uam.educore.api.Dtos.EdificioRequest;
 import edu.uam.educore.api.Dtos.EmpleadoDto;
 import edu.uam.educore.api.Dtos.EmpleadoRequest;
 import edu.uam.educore.api.Dtos.EstudianteDto;
 import edu.uam.educore.api.Dtos.EstudianteRequest;
 import edu.uam.educore.api.Dtos.MatriculaRequest;
+import edu.uam.educore.controller.EdificioController;
 import edu.uam.educore.controller.EmpleadoController;
 import edu.uam.educore.controller.EstudianteController;
+import edu.uam.educore.dao.EdificioRepoSql;
 import edu.uam.educore.dao.EmpleadoRepoSql;
 import edu.uam.educore.dao.EstudianteRepoSql;
+import edu.uam.educore.dao.ListaEdificioRepo;
 import edu.uam.educore.dao.ListaEmpleadoRepo;
 import edu.uam.educore.dao.ListaEstudianteRepo;
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.db.ConfiguracionBD;
+import edu.uam.educore.model.infraestructura.Aula;
+import edu.uam.educore.model.infraestructura.Edificio;
 import edu.uam.educore.model.personas.Empleado;
 import edu.uam.educore.model.personas.Estudiante;
 import io.javalin.Javalin;
@@ -57,6 +66,17 @@ public class ServidorApi {
 
     EmpleadoController empleadoController = new EmpleadoController(empleadoRepo);
 
+    // CONTROLLER
+    Repositorio<Edificio> edificioRepo;
+
+    try {
+      edificioRepo = new EdificioRepoSql(ConfiguracionBD.desdeArchivo(".env"));
+    } catch (IOException e) {
+      edificioRepo = new ListaEdificioRepo();
+    }
+
+    EdificioController edificioController = new EdificioController(edificioRepo);
+
     Javalin app =
         Javalin.create(
             cfg -> {
@@ -72,7 +92,7 @@ public class ServidorApi {
 
               registrarEstudiantes(cfg, estudianteController);
               registrarEmpleados(cfg, empleadoController);
-              registrarEdificios(cfg);
+              registrarEdificios(cfg, edificioController);
               registrarSecciones(cfg);
               registrarMatricula(cfg);
               registrarReporte(cfg);
@@ -184,58 +204,57 @@ public class ServidorApi {
 
   // ── Edificios / Aulas (P1 de cada grupo — sin controlador de nombre fijo) ──
 
-  private static void registrarEdificios(JavalinConfig cfg) {
+  private static void registrarEdificios(JavalinConfig cfg, EdificioController controller) {
     cfg.routes.get(
         "/api/edificios",
         ctx -> {
-          // TODO(estudiante · P1): reemplacen este bloque por su código. Ej.:
-          //   List<Edificio> edificios = MiControladorEdificio.listar();
-          //   ctx.json(EdificioDto.listaDesde(edificios));
-          ctx.status(501).json(Map.of("error", "edificios: pendiente de implementar"));
-        });
-
-    cfg.routes.post(
-        "/api/edificios",
-        ctx -> {
-          // TODO(estudiante · P1): parseen el body y llamen a su método de registro. Ej.:
-          //   EdificioRequest r = ctx.bodyAsClass(EdificioRequest.class);
-          //   Edificio creado = MiControladorEdificio.registrar(r.codigo(), r.nombre());
-          //   ctx.status(201).json(EdificioDto.desde(creado));
-          ctx.status(501).json(Map.of("error", "edificios: pendiente de implementar"));
+          List<Edificio> edificios = controller.listar();
+          ctx.json(EdificioDto.listaDesde(edificios));
         });
 
     cfg.routes.put(
         "/api/edificios/{id}",
         ctx -> {
-          // TODO(estudiante · P1): parseen el id y el body, y llamen a su método de
-          // actualización. Ej.:
-          //   int id = Integer.parseInt(ctx.pathParam("id"));
-          //   EdificioRequest r = ctx.bodyAsClass(EdificioRequest.class);
-          //   Edificio actualizado = MiControladorEdificio.actualizar(id, r.codigo(), r.nombre());
-          //   ctx.json(EdificioDto.desde(actualizado));
-          ctx.status(501).json(Map.of("error", "edificios: pendiente de implementar"));
+          int id = Integer.parseInt(ctx.pathParam("id"));
+
+          EdificioRequest r = ctx.bodyAsClass(EdificioRequest.class);
+
+          Edificio actualizado = controller.actualizar(id, r.codigo(), r.nombre());
+
+          ctx.json(EdificioDto.desde(actualizado));
         });
 
     cfg.routes.delete(
         "/api/edificios/{id}",
         ctx -> {
-          // TODO(estudiante · P1): llamen a su método de eliminación. Ej.:
-          //   MiControladorEdificio.eliminar(Integer.parseInt(ctx.pathParam("id")));
-          //   ctx.status(204);
-          ctx.status(501).json(Map.of("error", "edificios: pendiente de implementar"));
+          int id = Integer.parseInt(ctx.pathParam("id"));
+
+          controller.eliminar(id);
+
+          ctx.status(204);
+        });
+
+    cfg.routes.post(
+        "/api/edificios",
+        ctx -> {
+          EdificioRequest r = ctx.bodyAsClass(EdificioRequest.class);
+
+          Edificio creado = controller.registrar(r.codigo(), r.nombre());
+
+          ctx.status(201).json(EdificioDto.desde(creado));
         });
 
     cfg.routes.post(
         "/api/edificios/{id}/aulas",
         ctx -> {
-          // TODO(estudiante · P1): parseen el id, el body y llamen a su método para agregar
-          // un aula. Ej.:
-          //   int edificioId = Integer.parseInt(ctx.pathParam("id"));
-          //   AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
-          //   Aula aula = MiControladorEdificio.agregarAula(edificioId, r.numero(),
-          //       r.capacidad(), r.tipo() != null ? r.tipo() : TipoAula.REGULAR);
-          //   ctx.status(201).json(AulaDto.desde(aula));
-          ctx.status(501).json(Map.of("error", "edificios: pendiente de implementar"));
+          int edificioId = Integer.parseInt(ctx.pathParam("id"));
+
+          AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
+
+          Aula aula =
+              controller.agregarAula(edificioId, r.numero(), r.capacidad(), r.tipo().name());
+
+          ctx.status(201).json(AulaDto.desde(aula));
         });
   }
 

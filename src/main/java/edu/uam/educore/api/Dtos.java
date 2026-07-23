@@ -6,8 +6,9 @@ package edu.uam.educore.api;
 // hacen falta en cuanto descomenten cualquiera de los 3 bloques (los usan los listaDesde).
 import edu.uam.educore.enums.TipoEmpleado;
 // import edu.uam.educore.model.academico.Seccion;
-// import edu.uam.educore.model.infraestructura.Aula;
-// import edu.uam.educore.model.infraestructura.Edificio;
+import edu.uam.educore.model.infraestructura.Aula;
+import edu.uam.educore.model.infraestructura.Edificio;
+import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.personas.Empleado;
 import edu.uam.educore.model.personas.Estudiante;
 import edu.uam.educore.model.personas.EstudianteBecado;
@@ -110,33 +111,34 @@ public final class Dtos {
   // TODO(estudiante · P1): descomenten este bloque completo (y los imports de Edificio/Aula/
   // TipoAula arriba) cuando ya tengan sus propias clases Edificio y Aula.
   //
-  // public record EdificioRequest(String codigo, String nombre) {}
+  public record EdificioRequest(String codigo, String nombre) {}
+
+  public record AulaRequest(String numero, int capacidad, TipoAula tipo) {}
+
+  public record AulaDto(int id, String numero, int capacidad, String tipo) {
+    public static AulaDto desde(Aula a) {
+      return new AulaDto(a.getId(), a.getNumero(), a.getCapacidad(), a.getTipo().name());
+    }
+  }
+
   //
-  // public record AulaRequest(String numero, int capacidad, TipoAula tipo) {}
-  //
-  // public record AulaDto(int id, String numero, int capacidad, String tipo) {
-  //   public static AulaDto desde(Aula a) {
-  //     return new AulaDto(a.getId(), a.getNumero(), a.getCapacidad(), a.getTipo().name());
-  //   }
-  // }
-  //
-  // public record EdificioDto(int id, String codigo, String nombre, List<AulaDto> aulas) {
-  //   public static EdificioDto desde(Edificio e) {
-  //     return new EdificioDto(
-  //         e.getId(),
-  //         e.getCodigo(),
-  //         e.getNombre(),
-  //         e.getAulas().stream().map(AulaDto::desde).toList());
-  //   }
-  //
-  //   public static List<EdificioDto> listaDesde(List<Edificio> edificios) {
-  //     List<EdificioDto> resultado = new ArrayList<>();
-  //     for (Edificio e : edificios) {
-  //       resultado.add(EdificioDto.desde(e));
-  //     }
-  //     return resultado;
-  //   }
-  // }
+  public record EdificioDto(int id, String codigo, String nombre, List<AulaDto> aulas) {
+    public static EdificioDto desde(Edificio e) {
+      return new EdificioDto(
+          e.getId(),
+          e.getCodigo(),
+          e.getNombre(),
+          e.getAulas().stream().map(AulaDto::desde).toList());
+    }
+
+    public static List<EdificioDto> listaDesde(List<Edificio> edificios) {
+      List<EdificioDto> resultado = new ArrayList<>();
+      for (Edificio e : edificios) {
+        resultado.add(EdificioDto.desde(e));
+      }
+      return resultado;
+    }
+  }
 
   // ── Sección (P1 de cada grupo) ──
   // TODO(estudiante · P1): descomenten este bloque completo (y el import de Seccion arriba)

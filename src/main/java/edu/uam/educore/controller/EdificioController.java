@@ -80,4 +80,20 @@ public class EdificioController {
     }
     if (!eliminada) throw new Exception("No se encontró un aula con ID " + idAula);
   }
+
+  public Edificio actualizar(int id, String codigo, String nombre) throws Exception {
+
+    Edificio e = buscarPorId(id);
+
+    if (e == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + id);
+    }
+
+    e.setCodigo(codigo);
+    e.setNombre(nombre);
+
+    repo.actualizar(e);
+
+    return e;
+  }
 }
