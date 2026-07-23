@@ -6,6 +6,7 @@ import edu.uam.educore.model.infraestructura.Aula;
 
 import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.infraestructura.Edificio;
+import edu.uam.educore.model.infraestructura.TipoAula;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,6 +63,7 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       while (rs.next()) {
 
         Edificio e = new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
+<<<<<<< HEAD
 String sqlAulas =
     "SELECT * FROM aula WHERE edificio_id = ?";
 
@@ -85,6 +87,30 @@ while (rsAula.next()) {
 
     e.agregarAula(aula);
 }
+=======
+        String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
+
+        try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
+
+          psAula.setInt(1, e.getId());
+
+          try (ResultSet rsAula = psAula.executeQuery()) {
+
+            while (rsAula.next()) {
+
+              Aula aula =
+                  new Aula(
+                      rsAula.getInt("id"),
+                      rsAula.getString("numero"),
+                      rsAula.getInt("capacidad"),
+                      TipoAula.valueOf(rsAula.getString("tipo")),
+                      e);
+
+              e.agregarAula(aula);
+            }
+          }
+        }
+>>>>>>> 82fc1bd9ed9d08272123eaf035b117f9d5d5635d
         lista.add(e);
       }
     }
@@ -108,6 +134,26 @@ while (rsAula.next()) {
 
           Edificio e =
               new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
+
+          String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
+
+          PreparedStatement psAula = con.prepareStatement(sqlAulas);
+          psAula.setInt(1, e.getId());
+
+          ResultSet rsAula = psAula.executeQuery();
+
+          while (rsAula.next()) {
+
+            Aula aula =
+                new Aula(
+                    rsAula.getInt("id"),
+                    rsAula.getString("numero"),
+                    rsAula.getInt("capacidad"),
+                    TipoAula.valueOf(rsAula.getString("tipo")),
+                    e);
+
+            e.agregarAula(aula);
+          }
 
           return Optional.of(e);
         }
