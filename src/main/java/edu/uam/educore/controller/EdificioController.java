@@ -1,5 +1,6 @@
 package edu.uam.educore.controller;
 
+import edu.uam.educore.dao.EdificioRepoSql;
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
@@ -62,6 +63,10 @@ public class EdificioController {
     Aula aula = new Aula(proximoAulaId++, numero, capacidad, tipoAula, edificio);
 
     edificio.agregarAula(aula);
+
+    if (repo instanceof EdificioRepoSql repoSql) {
+      repoSql.guardarAula(aula);
+    }
 
     return aula;
   }

@@ -2,6 +2,7 @@ package edu.uam.educore.dao;
 
 import edu.uam.educore.db.Conexion;
 import edu.uam.educore.db.ConfiguracionBD;
+import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -117,6 +118,23 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
         PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, id);
+      ps.executeUpdate();
+    }
+  }
+
+  public void guardarAula(Aula aula) throws Exception {
+
+    String sql =
+        "INSERT INTO aula " + "(numero, capacidad, tipo, edificio_id) " + "VALUES (?, ?, ?, ?)";
+
+    try (Connection con = abrir();
+        PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+      ps.setString(1, aula.getNumero());
+      ps.setInt(2, aula.getCapacidad());
+      ps.setString(3, aula.getTipo().name());
+      ps.setInt(4, aula.getEdificio().getId());
+
       ps.executeUpdate();
     }
   }
