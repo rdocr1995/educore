@@ -1,6 +1,7 @@
 package edu.uam.educore.controller;
 
 import edu.uam.educore.dao.Repositorio;
+import edu.uam.educore.dao.SeccionRepoSql;
 import edu.uam.educore.model.academico.Seccion;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
@@ -84,6 +85,7 @@ public class SeccionController {
     if (seccion == null) {
       throw new IllegalArgumentException("No existe sección con ID " + seccionId);
     }
+    
 
     // Buscar estudiante
     Estudiante estudiante = estudianteRepo.buscarPorId(estudianteId).orElse(null);
@@ -91,11 +93,12 @@ public class SeccionController {
     if (estudiante == null) {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
+    
+    if (seccionRepo instanceof SeccionRepoSql repoSql) {
+    repoSql.inscribirEstudiante(seccionId, estudianteId);
+}
 
-    // Agregar estudiante
-    seccion.agregarEstudiante(estudiante);
-
-    seccionRepo.actualizar(seccion);
+    
   }
 
   // REMOVER

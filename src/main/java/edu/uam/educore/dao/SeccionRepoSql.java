@@ -155,4 +155,20 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
       ps.executeUpdate();
     }
   }
+  
+ public void inscribirEstudiante(int seccionId, int estudianteId) throws Exception {
+
+    String sql =
+        "INSERT INTO matricula (estudiante_id, seccion_id) " +
+        "VALUES (?, ?)";
+
+    try (Connection con = abrir();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, estudianteId);
+        ps.setInt(2, seccionId);
+
+        ps.executeUpdate();
+    }
+}
 }
