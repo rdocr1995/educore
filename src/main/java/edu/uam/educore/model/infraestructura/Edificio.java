@@ -10,6 +10,22 @@ public class Edificio {
 
   private List<Aula> aulas = new ArrayList<>();
 
+  public String getCodigo() {
+    return codigo;
+  }
+
+  public String getNombre() {
+    return nombre;
+  }
+
+  public void setCodigo(String codigo) {
+    this.codigo = codigo;
+  }
+
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
+
   // Agrega el aula
   public void agregarAula(Aula aula) {
     aulas.add(aula);
@@ -29,12 +45,8 @@ public class Edificio {
     return id;
   }
 
-  public String getCodigo() {
-    return codigo;
-  }
-
-  public String getNombre() {
-    return nombre;
+  public void setId(int id) {
+    this.id = id;
   }
 
   public String getInfo() {

@@ -1,6 +1,7 @@
 package edu.uam.educore.controller;
 
 import edu.uam.educore.dao.Repositorio;
+import edu.uam.educore.dao.SeccionRepoSql;
 import edu.uam.educore.model.academico.Seccion;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
@@ -92,10 +93,9 @@ public class SeccionController {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
 
-    // Agregar estudiante
-    seccion.agregarEstudiante(estudiante);
-
-    seccionRepo.actualizar(seccion);
+    if (seccionRepo instanceof SeccionRepoSql repoSql) {
+      repoSql.inscribirEstudiante(seccionId, estudianteId);
+    }
   }
 
   // REMOVER
@@ -113,13 +113,54 @@ public class SeccionController {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
 
-    seccion.removerEstudiante(estudiante);
-
-    seccionRepo.actualizar(seccion);
+    if (seccionRepo instanceof SeccionRepoSql repoSql) {
+      repoSql.removerEstudiante(seccionId, estudianteId);
+    }
   }
 
   public List<Seccion> listar() throws Exception {
     return seccionRepo.buscarTodos();
+  }
+
+  public Seccion actualizar(int id, String codigo, String nombre, int aulaId, int docenteId)
+      throws Exception {
+
+    // Buscar sección existente
+    Seccion seccion = seccionRepo.buscarPorId(id).orElse(null);
+
+    if (seccion == null) {
+      throw new IllegalArgumentException("No existe sección con ID " + id);
+    }
+
+    // Buscar docente
+    Empleado docente = empleadoRepo.buscarPorId(docenteId).orElse(null);
+
+    if (docente == null) {
+      throw new IllegalArgumentException("No existe empleado con ID " + docenteId);
+    }
+
+    // Buscar aula
+    Aula aulaEncontrada = null;
+
+    for (Edificio edificio : edificioRepo.buscarTodos()) {
+      for (Aula aula : edificio.getAulas()) {
+        if (aula.getId() == aulaId) {
+          aulaEncontrada = aula;
+          break;
+        }
+      }
+    }
+
+    if (aulaEncontrada == null) {
+      throw new IllegalArgumentException("No existe aula con ID " + aulaId);
+    }
+
+    // Crear nueva sección actualizada
+    Seccion actualizada = new Seccion(id, codigo, nombre, docente, aulaEncontrada);
+
+    seccionRepo.actualizar(actualizada);
+
+    return actualizada;
   }
 
   public void eliminar(int seccionId) throws Exception {

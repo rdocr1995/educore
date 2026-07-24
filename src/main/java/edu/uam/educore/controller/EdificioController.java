@@ -1,5 +1,6 @@
 package edu.uam.educore.controller;
 
+import edu.uam.educore.dao.EdificioRepoSql;
 import edu.uam.educore.dao.Repositorio;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
@@ -63,21 +64,46 @@ public class EdificioController {
 
     edificio.agregarAula(aula);
 
+    if (repo instanceof EdificioRepoSql repoSql) {
+      repoSql.guardarAula(aula);
+    }
+
     return aula;
   }
 
   public void eliminarAula(int idAula) throws Exception {
     boolean eliminada = false;
     for (Edificio e : repo.buscarTodos()) {
+
       Optional<Aula> aulaOpt = e.getAulas().stream().filter(a -> a.getId() == idAula).findFirst();
 
       if (aulaOpt.isPresent()) {
         e.getAulas().remove(aulaOpt.get());
+
+        if (repo instanceof EdificioRepoSql repoSql) {
+          repoSql.eliminarAula(idAula);
+        }
         repo.actualizar(e);
         eliminada = true;
         break;
       }
     }
     if (!eliminada) throw new Exception("No se encontró un aula con ID " + idAula);
+  }
+
+  public Edificio actualizar(int id, String codigo, String nombre) throws Exception {
+
+    Edificio e = buscarPorId(id);
+
+    if (e == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + id);
+    }
+
+    e.setCodigo(codigo);
+    e.setNombre(nombre);
+
+    repo.actualizar(e);
+
+    return e;
   }
 }
