@@ -85,7 +85,6 @@ public class SeccionController {
     if (seccion == null) {
       throw new IllegalArgumentException("No existe sección con ID " + seccionId);
     }
-    
 
     // Buscar estudiante
     Estudiante estudiante = estudianteRepo.buscarPorId(estudianteId).orElse(null);
@@ -93,12 +92,10 @@ public class SeccionController {
     if (estudiante == null) {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
-    
-    if (seccionRepo instanceof SeccionRepoSql repoSql) {
-    repoSql.inscribirEstudiante(seccionId, estudianteId);
-}
 
-    
+    if (seccionRepo instanceof SeccionRepoSql repoSql) {
+      repoSql.inscribirEstudiante(seccionId, estudianteId);
+    }
   }
 
   // REMOVER
@@ -116,11 +113,9 @@ public class SeccionController {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
 
-  if (seccionRepo instanceof SeccionRepoSql repoSql) {
-    repoSql.removerEstudiante(
-        seccionId,
-        estudianteId);
-}
+    if (seccionRepo instanceof SeccionRepoSql repoSql) {
+      repoSql.removerEstudiante(seccionId, estudianteId);
+    }
   }
 
   public List<Seccion> listar() throws Exception {

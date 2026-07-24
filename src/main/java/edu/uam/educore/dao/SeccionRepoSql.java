@@ -83,7 +83,7 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
                   rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"), docente, aula);
 
           cargarEstudiantes(con, s);
-          
+
           return Optional.of(s);
         }
       }
@@ -122,8 +122,8 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
         Seccion s =
             new Seccion(
                 rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"), docente, aula);
-        
-cargarEstudiantes(con, s);
+
+        cargarEstudiantes(con, s);
 
         lista.add(s);
       }
@@ -162,86 +162,79 @@ cargarEstudiantes(con, s);
       ps.executeUpdate();
     }
   }
-  
- public void inscribirEstudiante(int seccionId, int estudianteId) throws Exception {
 
-    String sql =
-        "INSERT INTO matricula (estudiante_id, seccion_id) " +
-        "VALUES (?, ?)";
+  public void inscribirEstudiante(int seccionId, int estudianteId) throws Exception {
+
+    String sql = "INSERT INTO matricula (estudiante_id, seccion_id) " + "VALUES (?, ?)";
 
     try (Connection con = abrir();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, estudianteId);
-        ps.setInt(2, seccionId);
+      ps.setInt(1, estudianteId);
+      ps.setInt(2, seccionId);
 
-        ps.executeUpdate();
+      ps.executeUpdate();
     }
-}
- 
- private void cargarEstudiantes(Connection con, Seccion seccion) throws Exception {
+  }
+
+  private void cargarEstudiantes(Connection con, Seccion seccion) throws Exception {
 
     String sql =
-            "SELECT e.* "
+        "SELECT e.* "
             + "FROM estudiante e "
             + "INNER JOIN matricula m ON e.id = m.estudiante_id "
             + "WHERE m.seccion_id = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, seccion.getId());
+      ps.setInt(1, seccion.getId());
 
-        try (ResultSet rs = ps.executeQuery()) {
+      try (ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
+        while (rs.next()) {
 
-                Estudiante estudiante;
+          Estudiante estudiante;
 
-                String tipo = rs.getString("tipo");
+          String tipo = rs.getString("tipo");
 
-                if ("BECADO".equals(tipo)) {
+          if ("BECADO".equals(tipo)) {
 
-                    estudiante =
-                            new EstudianteBecado(
-                                    rs.getInt("id"),
-                                    rs.getString("nombre"),
-                                    rs.getString("apellidos"),
-                                    rs.getString("email"),
-                                    rs.getString("carnet"),
-                                    rs.getDouble("porcentaje_beca"));
+            estudiante =
+                new EstudianteBecado(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("apellidos"),
+                    rs.getString("email"),
+                    rs.getString("carnet"),
+                    rs.getDouble("porcentaje_beca"));
 
-                } else {
+          } else {
 
-                    estudiante =
-                            new EstudianteRegular(
-                                    rs.getInt("id"),
-                                    rs.getString("nombre"),
-                                    rs.getString("apellidos"),
-                                    rs.getString("email"),
-                                    rs.getString("carnet"));
-                }
+            estudiante =
+                new EstudianteRegular(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("apellidos"),
+                    rs.getString("email"),
+                    rs.getString("carnet"));
+          }
 
-                seccion.agregarEstudiante(estudiante);
-            }
+          seccion.agregarEstudiante(estudiante);
         }
+      }
     }
-}
+  }
 
- public void removerEstudiante(int seccionId, int estudianteId) throws Exception {
-    String sql =
-        "DELETE FROM matricula "
-      + "WHERE seccion_id=? "
-      + "AND estudiante_id=?";
+  public void removerEstudiante(int seccionId, int estudianteId) throws Exception {
+    String sql = "DELETE FROM matricula " + "WHERE seccion_id=? " + "AND estudiante_id=?";
 
     try (Connection con = abrir();
-         PreparedStatement ps =
-             con.prepareStatement(sql)) {
+        PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, seccionId);
-        ps.setInt(2, estudianteId);
+      ps.setInt(1, seccionId);
+      ps.setInt(2, estudianteId);
 
-        ps.executeUpdate();
+      ps.executeUpdate();
     }
-}
- 
+  }
 }
