@@ -122,6 +122,47 @@ public class SeccionController {
     return seccionRepo.buscarTodos();
   }
 
+  public Seccion actualizar(int id, String codigo, String nombre, int aulaId, int docenteId)
+      throws Exception {
+
+    // Buscar sección existente
+    Seccion seccion = seccionRepo.buscarPorId(id).orElse(null);
+
+    if (seccion == null) {
+      throw new IllegalArgumentException("No existe sección con ID " + id);
+    }
+
+    // Buscar docente
+    Empleado docente = empleadoRepo.buscarPorId(docenteId).orElse(null);
+
+    if (docente == null) {
+      throw new IllegalArgumentException("No existe empleado con ID " + docenteId);
+    }
+
+    // Buscar aula
+    Aula aulaEncontrada = null;
+
+    for (Edificio edificio : edificioRepo.buscarTodos()) {
+      for (Aula aula : edificio.getAulas()) {
+        if (aula.getId() == aulaId) {
+          aulaEncontrada = aula;
+          break;
+        }
+      }
+    }
+
+    if (aulaEncontrada == null) {
+      throw new IllegalArgumentException("No existe aula con ID " + aulaId);
+    }
+
+    // Crear nueva sección actualizada
+    Seccion actualizada = new Seccion(id, codigo, nombre, docente, aulaEncontrada);
+
+    seccionRepo.actualizar(actualizada);
+
+    return actualizada;
+  }
+
   public void eliminar(int seccionId) throws Exception {
 
     Seccion seccion = seccionRepo.buscarPorId(seccionId).orElse(null);
