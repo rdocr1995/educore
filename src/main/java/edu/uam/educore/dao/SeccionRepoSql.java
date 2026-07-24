@@ -8,6 +8,9 @@ import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
 import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.personas.Empleado;
+import edu.uam.educore.model.personas.Estudiante;
+import edu.uam.educore.model.personas.EstudianteBecado;
+import edu.uam.educore.model.personas.EstudianteRegular;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,6 +82,8 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
               new Seccion(
                   rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"), docente, aula);
 
+          cargarEstudiantes(con, s);
+          
           return Optional.of(s);
         }
       }
@@ -117,6 +122,8 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
         Seccion s =
             new Seccion(
                 rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"), docente, aula);
+        
+cargarEstudiantes(con, s);
 
         lista.add(s);
       }
@@ -171,4 +178,54 @@ public class SeccionRepoSql extends Repositorio<Seccion> {
         ps.executeUpdate();
     }
 }
+ 
+ private void cargarEstudiantes(Connection con, Seccion seccion) throws Exception {
+
+    String sql =
+            "SELECT e.* "
+            + "FROM estudiante e "
+            + "INNER JOIN matricula m ON e.id = m.estudiante_id "
+            + "WHERE m.seccion_id = ?";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, seccion.getId());
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                Estudiante estudiante;
+
+                String tipo = rs.getString("tipo");
+
+                if ("BECADO".equals(tipo)) {
+
+                    estudiante =
+                            new EstudianteBecado(
+                                    rs.getInt("id"),
+                                    rs.getString("nombre"),
+                                    rs.getString("apellidos"),
+                                    rs.getString("email"),
+                                    rs.getString("carnet"),
+                                    rs.getDouble("porcentaje_beca"));
+
+                } else {
+
+                    estudiante =
+                            new EstudianteRegular(
+                                    rs.getInt("id"),
+                                    rs.getString("nombre"),
+                                    rs.getString("apellidos"),
+                                    rs.getString("email"),
+                                    rs.getString("carnet"));
+                }
+
+                seccion.agregarEstudiante(estudiante);
+            }
+        }
+    }
+}
+
+ 
 }
