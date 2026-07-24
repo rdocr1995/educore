@@ -227,5 +227,21 @@ cargarEstudiantes(con, s);
     }
 }
 
+ public void removerEstudiante(int seccionId, int estudianteId) throws Exception {
+    String sql =
+        "DELETE FROM matricula "
+      + "WHERE seccion_id=? "
+      + "AND estudiante_id=?";
+
+    try (Connection con = abrir();
+         PreparedStatement ps =
+             con.prepareStatement(sql)) {
+
+        ps.setInt(1, seccionId);
+        ps.setInt(2, estudianteId);
+
+        ps.executeUpdate();
+    }
+}
  
 }

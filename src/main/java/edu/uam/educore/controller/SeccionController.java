@@ -116,9 +116,11 @@ public class SeccionController {
       throw new IllegalArgumentException("No existe estudiante con ID " + estudianteId);
     }
 
-    seccion.removerEstudiante(estudiante);
-
-    seccionRepo.actualizar(seccion);
+  if (seccionRepo instanceof SeccionRepoSql repoSql) {
+    repoSql.removerEstudiante(
+        seccionId,
+        estudianteId);
+}
   }
 
   public List<Seccion> listar() throws Exception {
