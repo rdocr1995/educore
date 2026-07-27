@@ -83,6 +83,7 @@ public class ServidorReportes {
    * consultas COUNT(*).
    */
   private String generarYGuardar() throws Exception {
+
     Connection con = Conexion.getConnection(config.url(), config.usuario(), config.contrasena());
 
     int estudiantes;
@@ -92,68 +93,55 @@ public class ServidorReportes {
     int matriculas;
 
     // ESTUDIANTES
-
     PreparedStatement psEst = con.prepareStatement("SELECT COUNT(*) total FROM estudiante");
 
     ResultSet rsEst = psEst.executeQuery();
-
     rsEst.next();
-
     estudiantes = rsEst.getInt("total");
 
-    // EMPLEADO
+    // EMPLEADOS
     PreparedStatement psEmpleados = con.prepareStatement("SELECT COUNT(*) total FROM empleado");
 
     ResultSet rsEmpleados = psEmpleados.executeQuery();
-
     rsEmpleados.next();
+    empleados = rsEmpleados.getInt("total");
 
-    empleados = rsEst.getInt("total");
-
-    // SECCION
+    // SECCIONES
     PreparedStatement psSecciones = con.prepareStatement("SELECT COUNT(*) total FROM seccion");
 
     ResultSet rsSecciones = psSecciones.executeQuery();
-
     rsSecciones.next();
-
-    secciones = rsEst.getInt("total");
+    secciones = rsSecciones.getInt("total");
 
     // AULAS
-
     PreparedStatement psAulas = con.prepareStatement("SELECT COUNT(*) total FROM aula");
 
     ResultSet rsAulas = psAulas.executeQuery();
+    rsAulas.next();
+    aulas = rsAulas.getInt("total");
 
-    rsSecciones.next();
-
-    aulas = rsEst.getInt("total");
-
-    // Matricula
-
+    // MATRICULAS
     PreparedStatement psMatriculas = con.prepareStatement("SELECT COUNT(*) total FROM matricula");
 
-    ResultSet rsMatriculas = psEst.executeQuery();
-
-    rsSecciones.next();
-
+    ResultSet rsMatriculas = psMatriculas.executeQuery();
+    rsMatriculas.next();
     matriculas = rsMatriculas.getInt("total");
 
     String contenido =
-        "===== REPORTE EDUCORE =====\n"
-            + "Estudiantes : "
+        "REPORTE EDUCORE\n"
+            + "Estudiantes: "
             + estudiantes
             + "\n"
-            + "Empleados   : "
+            + "Empleados: "
             + empleados
             + "\n"
-            + "Secciones   : "
+            + "Secciones: "
             + secciones
             + "\n"
-            + "Aulas       : "
+            + "Aulas: "
             + aulas
             + "\n"
-            + "Matriculas  : "
+            + "Matriculas: "
             + matriculas
             + "\n";
 
