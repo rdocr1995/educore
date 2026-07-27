@@ -48,75 +48,59 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
   }
 
   @Override
-  public List<Edificio> buscarTodos() throws Exception {
+public List<Edificio> buscarTodos() throws Exception {
 
     List<Edificio> lista = new ArrayList<>();
 
     String sql = "SELECT * FROM edificio";
 
-    try (Connection con = abrir();
+    try (
+        Connection con = abrir();
         PreparedStatement ps = con.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()) {
+        ResultSet rs = ps.executeQuery()
+    ) {
 
-      while (rs.next()) {
-
-        Edificio e = new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
         while (rs.next()) {
 
-          String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
+            Edificio e =
+                new Edificio(
+                    rs.getInt("id"),
+                    rs.getString("codigo"),
+                    rs.getString("nombre"));
 
-          try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
+            String sqlAulas =
+                "SELECT * FROM aula WHERE edificio_id = ?";
 
-            psAula.setInt(1, e.getId());
+            try (PreparedStatement psAula =
+                    con.prepareStatement(sqlAulas)) {
 
-            try (ResultSet rsAula = psAula.executeQuery()) {
+                psAula.setInt(1, e.getId());
 
-              while (rsAula.next()) {
+                try (ResultSet rsAula =
+                        psAula.executeQuery()) {
 
-                Aula aula =
-                    new Aula(
-                        rsAula.getInt("id"),
-                        rsAula.getString("numero"),
-                        rsAula.getInt("capacidad"),
-                        TipoAula.valueOf(rsAula.getString("tipo")),
-                        e);
+                    while (rsAula.next()) {
 
-                e.agregarAula(aula);
-              }
+                        Aula aula =
+                            new Aula(
+                                rsAula.getInt("id"),
+                                rsAula.getString("numero"),
+                                rsAula.getInt("capacidad"),
+                                TipoAula.valueOf(
+                                    rsAula.getString("tipo")),
+                                e);
+
+                        e.agregarAula(aula);
+                    }
+                }
             }
-          }
 
-          lista.add(e);
+            lista.add(e);
         }
-        String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
-
-        try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
-
-          psAula.setInt(1, e.getId());
-
-          try (ResultSet rsAula = psAula.executeQuery()) {
-
-            while (rsAula.next()) {
-
-              Aula aula =
-                  new Aula(
-                      rsAula.getInt("id"),
-                      rsAula.getString("numero"),
-                      rsAula.getInt("capacidad"),
-                      TipoAula.valueOf(rsAula.getString("tipo")),
-                      e);
-
-              e.agregarAula(aula);
-            }
-          }
-        }
-
-        lista.add(e);
-      }
     }
 
     return lista;
-  }
+}
 
   @Override
   public Optional<Edificio> buscarPorId(int id) throws Exception {
