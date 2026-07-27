@@ -106,7 +106,7 @@ public class ServidorReportes {
 
     ResultSet rsEmpleados = psEmpleados.executeQuery();
 
-    rsEst.next();
+    rsEmpleados.next();
 
     empleados = rsEst.getInt("total");
 
@@ -115,7 +115,7 @@ public class ServidorReportes {
 
     ResultSet rsSecciones = psSecciones.executeQuery();
 
-    rsEst.next();
+    rsSecciones.next();
 
     secciones = rsEst.getInt("total");
 
@@ -125,7 +125,7 @@ public class ServidorReportes {
 
     ResultSet rsAulas = psAulas.executeQuery();
 
-    rsEst.next();
+    rsSecciones.next();
 
     aulas = rsEst.getInt("total");
 
@@ -135,7 +135,7 @@ public class ServidorReportes {
 
     ResultSet rsMatriculas = psEst.executeQuery();
 
-    rsEst.next();
+    rsSecciones.next();
 
     matriculas = rsMatriculas.getInt("total");
 
