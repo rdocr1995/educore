@@ -130,8 +130,6 @@ public class ServidorReportes {
 
     aulas = rsAulas.getInt("total");
 
-    // Matricula
-
 
     // MATRICULAS
 
