@@ -260,16 +260,15 @@ public class ServidorApi {
           // Obtenemos el ID del edificio desde la dirección de la petición.
           int edificioId = Integer.parseInt(ctx.pathParam("id"));
 
-          // Obtenemos el ID del aula que se desea modificar.
+        
           int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
 
-          // Convertimos el JSON recibido en un objeto AulaRequest.
           AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
 
-          // Si el tipo no viene en el JSON, usamos REGULAR.
+       
           TipoAula tipo = r.tipo() != null ? r.tipo() : TipoAula.REGULAR;
 
-          // Enviamos los datos al controlador.
+      
           Aula aulaActualizada =
               controller.actualizarAula(edificioId, aulaId, r.numero(), r.capacidad(), tipo);
 
@@ -311,14 +310,16 @@ public class ServidorApi {
         });
 
     cfg.routes.delete(
-        "/api/aulas/{id}",
-        ctx -> {
-          int idAula = Integer.parseInt(ctx.pathParam("id"));
+    "/api/edificios/{id}/aulas/{aulaId}",
+    ctx -> {
 
-          controller.eliminarAula(idAula);
+      int aulaId =
+          Integer.parseInt(ctx.pathParam("aulaId"));
 
-          ctx.status(204);
-        });
+      controller.eliminarAula(aulaId);
+
+      ctx.status(204);
+    });
   }
 
   // ── Secciones (P1 de cada grupo — sin controlador de nombre fijo) ──
