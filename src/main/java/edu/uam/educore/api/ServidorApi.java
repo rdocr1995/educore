@@ -41,6 +41,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +105,16 @@ public class ServidorApi {
               cfg.routes.exception(
                   IllegalArgumentException.class,
                   (e, ctx) -> ctx.status(400).json(Map.of("error", e.getMessage())));
+
+              cfg.routes.exception(
+                  SQLIntegrityConstraintViolationException.class,
+                  (e, ctx) ->
+                      ctx.status(409)
+                          .json(
+                              Map.of(
+                                  "error",
+                                  "No se puede eliminar: el registro tiene datos asociados.")));
+
               cfg.routes.exception(
                   Exception.class,
                   (e, ctx) -> ctx.status(500).json(Map.of("error", e.getMessage())));

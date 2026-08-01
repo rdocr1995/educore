@@ -106,9 +106,7 @@ public class ServidorReportes {
     rsEmpleados.next();
     empleados = rsEmpleados.getInt("total");
 
-
     empleados = rsEmpleados.getInt("total");
-
 
     // SECCIONES
     PreparedStatement psSecciones = con.prepareStatement("SELECT COUNT(*) total FROM seccion");
@@ -125,11 +123,9 @@ public class ServidorReportes {
     rsAulas.next();
     aulas = rsAulas.getInt("total");
 
-
     rsSecciones.next();
 
     aulas = rsAulas.getInt("total");
-
 
     // MATRICULAS
 
