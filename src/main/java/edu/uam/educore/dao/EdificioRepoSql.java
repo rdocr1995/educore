@@ -183,6 +183,29 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
     }
   }
 
+  public void actualizarAula(Aula aula) throws Exception {
+
+    String sql =
+        "UPDATE aula "
+            + "SET numero = ?, capacidad = ?, tipo = ?, edificio_id = ? "
+            + "WHERE id = ?";
+
+    try (Connection con = abrir();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+
+      ps.setString(1, aula.getNumero());
+      ps.setInt(2, aula.getCapacidad());
+      ps.setString(3, aula.getTipo().name());
+      ps.setInt(4, aula.getEdificio().getId());
+      ps.setInt(5, aula.getId());
+      int filasActualizadas = ps.executeUpdate();
+
+      if (filasActualizadas == 0) {
+        throw new IllegalArgumentException("No existe un aula con el ID " + aula.getId());
+      }
+    }
+  }
+
   public void eliminarAula(int idAula) throws Exception {
 
     String sql = "DELETE FROM aula WHERE id = ?";

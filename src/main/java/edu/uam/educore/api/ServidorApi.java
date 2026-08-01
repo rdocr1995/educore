@@ -29,6 +29,7 @@ import edu.uam.educore.db.ConfiguracionBD;
 import edu.uam.educore.model.academico.Seccion;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
+import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.personas.Empleado;
 import edu.uam.educore.model.personas.Estudiante;
 import io.javalin.Javalin;
@@ -251,6 +252,29 @@ public class ServidorApi {
           Edificio actualizado = controller.actualizar(id, r.codigo(), r.nombre());
 
           ctx.json(EdificioDto.desde(actualizado));
+        });
+
+    cfg.routes.put(
+        "/api/edificios/{id}/aulas/{aulaId}",
+        ctx -> {
+          // Obtenemos el ID del edificio desde la dirección de la petición.
+          int edificioId = Integer.parseInt(ctx.pathParam("id"));
+
+          // Obtenemos el ID del aula que se desea modificar.
+          int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
+
+          // Convertimos el JSON recibido en un objeto AulaRequest.
+          AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
+
+          // Si el tipo no viene en el JSON, usamos REGULAR.
+          TipoAula tipo = r.tipo() != null ? r.tipo() : TipoAula.REGULAR;
+
+          // Enviamos los datos al controlador.
+          Aula aulaActualizada =
+              controller.actualizarAula(edificioId, aulaId, r.numero(), r.capacidad(), tipo);
+
+          // Se devuelve una sola respuesta HTTP exitosa.
+          ctx.status(200).json(AulaDto.desde(aulaActualizada));
         });
 
     cfg.routes.delete(
