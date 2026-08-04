@@ -260,15 +260,12 @@ public class ServidorApi {
           // Obtenemos el ID del edificio desde la dirección de la petición.
           int edificioId = Integer.parseInt(ctx.pathParam("id"));
 
-        
           int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
 
           AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
 
-       
           TipoAula tipo = r.tipo() != null ? r.tipo() : TipoAula.REGULAR;
 
-      
           Aula aulaActualizada =
               controller.actualizarAula(edificioId, aulaId, r.numero(), r.capacidad(), tipo);
 
@@ -310,16 +307,14 @@ public class ServidorApi {
         });
 
     cfg.routes.delete(
-    "/api/edificios/{id}/aulas/{aulaId}",
-    ctx -> {
+        "/api/edificios/{id}/aulas/{aulaId}",
+        ctx -> {
+          int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
 
-      int aulaId =
-          Integer.parseInt(ctx.pathParam("aulaId"));
+          controller.eliminarAula(aulaId);
 
-      controller.eliminarAula(aulaId);
-
-      ctx.status(204);
-    });
+          ctx.status(204);
+        });
   }
 
   // ── Secciones (P1 de cada grupo — sin controlador de nombre fijo) ──
