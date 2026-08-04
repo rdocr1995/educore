@@ -61,33 +61,7 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       while (rs.next()) {
 
         Edificio e = new Edificio(rs.getInt("id"), rs.getString("codigo"), rs.getString("nombre"));
-        while (rs.next()) {
 
-          String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
-
-          try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
-
-            psAula.setInt(1, e.getId());
-
-            try (ResultSet rsAula = psAula.executeQuery()) {
-
-              while (rsAula.next()) {
-
-                Aula aula =
-                    new Aula(
-                        rsAula.getInt("id"),
-                        rsAula.getString("numero"),
-                        rsAula.getInt("capacidad"),
-                        TipoAula.valueOf(rsAula.getString("tipo")),
-                        e);
-
-                e.agregarAula(aula);
-              }
-            }
-          }
-
-          lista.add(e);
-        }
         String sqlAulas = "SELECT * FROM aula WHERE edificio_id = ?";
 
         try (PreparedStatement psAula = con.prepareStatement(sqlAulas)) {
@@ -206,6 +180,29 @@ public class EdificioRepoSql extends Repositorio<Edificio> {
       ps.setInt(4, aula.getEdificio().getId());
 
       ps.executeUpdate();
+    }
+  }
+
+  public void actualizarAula(Aula aula) throws Exception {
+
+    String sql =
+        "UPDATE aula "
+            + "SET numero = ?, capacidad = ?, tipo = ?, edificio_id = ? "
+            + "WHERE id = ?";
+
+    try (Connection con = abrir();
+        PreparedStatement ps = con.prepareStatement(sql)) {
+
+      ps.setString(1, aula.getNumero());
+      ps.setInt(2, aula.getCapacidad());
+      ps.setString(3, aula.getTipo().name());
+      ps.setInt(4, aula.getEdificio().getId());
+      ps.setInt(5, aula.getId());
+      int filasActualizadas = ps.executeUpdate();
+
+      if (filasActualizadas == 0) {
+        throw new IllegalArgumentException("No existe un aula con el ID " + aula.getId());
+      }
     }
   }
 

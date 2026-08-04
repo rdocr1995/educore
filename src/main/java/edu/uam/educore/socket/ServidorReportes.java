@@ -1,5 +1,6 @@
 package edu.uam.educore.socket;
 
+import edu.uam.educore.db.Conexion;
 import edu.uam.educore.db.ConfiguracionBD;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +9,13 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Servidor de Reportes. Ante la orden REPORTE cuenta las entidades del sistema en la base de datos,
@@ -76,9 +83,86 @@ public class ServidorReportes {
    * consultas COUNT(*).
    */
   private String generarYGuardar() throws Exception {
-    // Acá va su lógica: contar en la BD (estudiante, empleado, seccion, aula, matricula), armar
-    // el texto del reporte, escribirlo como TXT en salidaDir (Files.createDirectories +
-    // Files.writeString con timestamp) y devolver ese contenido.
-    return "Reporte aún no implementado.";
+
+    Connection con = Conexion.getConnection(config.url(), config.usuario(), config.contrasena());
+
+    int estudiantes;
+    int empleados;
+    int secciones;
+    int aulas;
+    int matriculas;
+
+    // ESTUDIANTES
+    PreparedStatement psEst = con.prepareStatement("SELECT COUNT(*) total FROM estudiante");
+
+    ResultSet rsEst = psEst.executeQuery();
+    rsEst.next();
+    estudiantes = rsEst.getInt("total");
+
+    // EMPLEADOS
+    PreparedStatement psEmpleados = con.prepareStatement("SELECT COUNT(*) total FROM empleado");
+
+    ResultSet rsEmpleados = psEmpleados.executeQuery();
+    rsEmpleados.next();
+    empleados = rsEmpleados.getInt("total");
+
+    empleados = rsEmpleados.getInt("total");
+
+    // SECCIONES
+    PreparedStatement psSecciones = con.prepareStatement("SELECT COUNT(*) total FROM seccion");
+
+    ResultSet rsSecciones = psSecciones.executeQuery();
+    rsSecciones.next();
+
+    secciones = rsSecciones.getInt("total");
+
+    // AULAS
+    PreparedStatement psAulas = con.prepareStatement("SELECT COUNT(*) total FROM aula");
+
+    ResultSet rsAulas = psAulas.executeQuery();
+    rsAulas.next();
+    aulas = rsAulas.getInt("total");
+
+    rsSecciones.next();
+
+    aulas = rsAulas.getInt("total");
+
+    // MATRICULAS
+
+    PreparedStatement psMatriculas = con.prepareStatement("SELECT COUNT(*) total FROM matricula");
+
+    ResultSet rsMatriculas = psMatriculas.executeQuery();
+    rsMatriculas.next();
+    matriculas = rsMatriculas.getInt("total");
+
+    String contenido =
+        "REPORTE EDUCORE\n"
+            + "Estudiantes: "
+            + estudiantes
+            + "\n"
+            + "Empleados: "
+            + empleados
+            + "\n"
+            + "Secciones: "
+            + secciones
+            + "\n"
+            + "Aulas: "
+            + aulas
+            + "\n"
+            + "Matriculas: "
+            + matriculas
+            + "\n";
+
+    String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmmss"));
+
+    String nombreArchivo = "reporte_" + timestamp + ".txt";
+
+    Files.createDirectories(salidaDir);
+
+    Path archivoSalida = salidaDir.resolve(nombreArchivo);
+
+    Files.writeString(archivoSalida, contenido, StandardCharsets.UTF_8);
+
+    return contenido;
   }
 }

@@ -37,6 +37,18 @@ public class Aula {
     return edificio;
   }
 
+  public void setNumero(String numero) {
+    this.numero = numero;
+  }
+
+  public void setCapacidad(int capacidad) {
+    this.capacidad = capacidad;
+  }
+
+  public void setTipo(TipoAula tipo) {
+    this.tipo = tipo;
+  }
+
   public String getInfo() {
     return numero + " | Capacidad: " + capacidad + " | Tipo: " + tipo;
   }

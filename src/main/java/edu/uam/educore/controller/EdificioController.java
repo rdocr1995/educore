@@ -91,6 +91,34 @@ public class EdificioController {
     if (!eliminada) throw new Exception("No se encontró un aula con ID " + idAula);
   }
 
+  public Aula actualizarAula(
+      int edificioId, int aulaId, String numero, int capacidad, TipoAula tipo) throws Exception {
+
+    Edificio edificio = buscarPorId(edificioId);
+
+    if (edificio == null) {
+      throw new IllegalArgumentException("No existe edificio con ID " + edificioId);
+    }
+
+    Optional<Aula> aulaOpt =
+        edificio.getAulas().stream().filter(a -> a.getId() == aulaId).findFirst();
+
+    if (aulaOpt.isEmpty()) {
+      throw new IllegalArgumentException("No existe aula con ID " + aulaId);
+    }
+
+    Aula aula = aulaOpt.get();
+
+    aula.setNumero(numero);
+    aula.setCapacidad(capacidad);
+    aula.setTipo(tipo);
+
+    if (repo instanceof EdificioRepoSql repoSql) {
+      repoSql.actualizarAula(aula);
+    }
+    return aula;
+  }
+
   public Edificio actualizar(int id, String codigo, String nombre) throws Exception {
 
     Edificio e = buscarPorId(id);

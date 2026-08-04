@@ -64,7 +64,7 @@ public class ServidorMatricula {
     String archivo = linea.substring("MATRICULAR ".length()).trim();
     try {
       int k = procesarLote(archivo);
-      out.println("201 " + k);
+      out.println("Se procesaron correctamente " + k + "     matriculas");
     } catch (Exception e) {
       out.println("400 " + e.getMessage());
     }

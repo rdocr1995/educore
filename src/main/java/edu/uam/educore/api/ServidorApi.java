@@ -29,6 +29,7 @@ import edu.uam.educore.db.ConfiguracionBD;
 import edu.uam.educore.model.academico.Seccion;
 import edu.uam.educore.model.infraestructura.Aula;
 import edu.uam.educore.model.infraestructura.Edificio;
+import edu.uam.educore.model.infraestructura.TipoAula;
 import edu.uam.educore.model.personas.Empleado;
 import edu.uam.educore.model.personas.Estudiante;
 import io.javalin.Javalin;
@@ -41,6 +42,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +106,16 @@ public class ServidorApi {
               cfg.routes.exception(
                   IllegalArgumentException.class,
                   (e, ctx) -> ctx.status(400).json(Map.of("error", e.getMessage())));
+
+              cfg.routes.exception(
+                  SQLIntegrityConstraintViolationException.class,
+                  (e, ctx) ->
+                      ctx.status(409)
+                          .json(
+                              Map.of(
+                                  "error",
+                                  "No se puede eliminar: el registro tiene datos asociados.")));
+
               cfg.routes.exception(
                   Exception.class,
                   (e, ctx) -> ctx.status(500).json(Map.of("error", e.getMessage())));
@@ -242,6 +254,25 @@ public class ServidorApi {
           ctx.json(EdificioDto.desde(actualizado));
         });
 
+    cfg.routes.put(
+        "/api/edificios/{id}/aulas/{aulaId}",
+        ctx -> {
+          // Obtenemos el ID del edificio desde la dirección de la petición.
+          int edificioId = Integer.parseInt(ctx.pathParam("id"));
+
+          int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
+
+          AulaRequest r = ctx.bodyAsClass(AulaRequest.class);
+
+          TipoAula tipo = r.tipo() != null ? r.tipo() : TipoAula.REGULAR;
+
+          Aula aulaActualizada =
+              controller.actualizarAula(edificioId, aulaId, r.numero(), r.capacidad(), tipo);
+
+          // Se devuelve una sola respuesta HTTP exitosa.
+          ctx.status(200).json(AulaDto.desde(aulaActualizada));
+        });
+
     cfg.routes.delete(
         "/api/edificios/{id}",
         ctx -> {
@@ -276,11 +307,11 @@ public class ServidorApi {
         });
 
     cfg.routes.delete(
-        "/api/aulas/{id}",
+        "/api/edificios/{id}/aulas/{aulaId}",
         ctx -> {
-          int idAula = Integer.parseInt(ctx.pathParam("id"));
+          int aulaId = Integer.parseInt(ctx.pathParam("aulaId"));
 
-          controller.eliminarAula(idAula);
+          controller.eliminarAula(aulaId);
 
           ctx.status(204);
         });
